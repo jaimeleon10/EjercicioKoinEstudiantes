@@ -1,0 +1,30 @@
+-- Database: Tablas y Operaciones CRUD
+
+-- Tabla de estudiantes
+CREATE TABLE IF NOT EXISTS estudiantes (
+    id INTEGER PRIMARY KEY,
+    nombre TEXT NOT NULL,
+    calificacion INTEGER NOT NULL
+);
+
+-- Operaciones CRUD para la tabla de estudiantes
+removeAllEstudiantes:
+DELETE FROM estudiantes;
+
+selectAllEstudiantes:
+SELECT * FROM estudiantes;
+
+selectEstudianteById:
+SELECT * FROM estudiantes WHERE id = ?;
+
+selectEstudianteLastInserted:
+SELECT * FROM estudiantes WHERE id = last_insert_rowid();
+
+insertEstudiante:
+INSERT INTO estudiantes (nombre, calificacion) VALUES (?, ?);
+
+updateEstudiante:
+UPDATE estudiantes SET nombre = ?, calificacion = ? WHERE id = ?;
+
+deleteEstudiante:
+DELETE FROM estudiantes WHERE id = ?;
