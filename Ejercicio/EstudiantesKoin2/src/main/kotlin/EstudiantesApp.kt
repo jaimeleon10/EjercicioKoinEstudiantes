@@ -1,5 +1,7 @@
 package dev.jaimeleon
 
+import com.github.michaelbull.result.onFailure
+import com.github.michaelbull.result.onSuccess
 import dev.jaimeleon.estudiantes.models.Estudiante
 import dev.jaimeleon.estudiantes.services.EstudiantesService
 import org.koin.core.component.KoinComponent
@@ -18,30 +20,42 @@ class EstudiantesApp : KoinComponent {
         println()
 
         logger.warn { "Imprimiendo estudiante con id 8..." }
-        println(contPorDefecto.getById(8).value)
+        contPorDefecto.getById(8).onSuccess {
+            println(it)
+        }.onFailure {
+            println("ERROR: ${it.message}")
+        }
 
         println()
 
         logger.warn { "Guardando nuevo estudiante..." }
         val e1 = Estudiante(id = 11, nombre = "NuevoEstudiante", calificacion = 8)
         contPorDefecto.save(e1)
-        logger.warn { "Imprimiendo estudiante guardado..." }
-        println(contPorDefecto.getById(11))
+            .onSuccess { estudiante ->
+                println("Estudiante '${estudiante.nombre}' guardado con éxito")
+                logger.warn { "Imprimiendo estudiante guardado..." }
+                contPorDefecto.getById(estudiante.id).onSuccess { println(it) }.onFailure { println("ERROR: ${it.message}") }
+            }
+            .onFailure { println("ERROR: ${it.message}") }
 
         println()
 
         logger.warn { "Actualizando estudiante con id 3..." }
         val eUpdate = Estudiante(id = 3, nombre = "EstudianteUpdate", calificacion = 1)
-        contPorDefecto.update(3, eUpdate)
-        logger.warn { "Imprimiendo estudiante actualizado..." }
-        println(contPorDefecto.getById(3))
+        contPorDefecto.update(3, eUpdate).onSuccess { estudiante ->
+            logger.warn { "Imprimiendo estudiante actualizado..." }
+            contPorDefecto.getById(estudiante.id).onSuccess { println(it) }.onFailure { println("ERROR: ${it.message}") }
+        }.onFailure { println("ERROR: ${it.message}") }
+
 
         println()
 
         logger.warn { "Borrando estudiante con id 11..." }
-        contPorDefecto.delete(11)
-        logger.warn { "Imprimiendo estudiante eliminado..." }
-        println(contPorDefecto.getById(11))
+        contPorDefecto.delete(11).onSuccess { estudiante ->
+            logger.warn { "Imprimiendo estudiante eliminado..." }
+            contPorDefecto.getById(estudiante.id).onSuccess { println(it) }.onFailure { println("ERROR: ${it.message}") }
+        }.onFailure { println("ERROR: ${it.message}") }
+
 
         println()
 

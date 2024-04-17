@@ -42,7 +42,7 @@ class EstudiantesServiceImpl(
         return estudianteValidator.validate(estudiante).andThen {
             Ok(estudiantesRepository.save(it))
         }.andThen { e ->
-            println("Guardando en cache")
+            logger.debug { "Guardando en cache" }
             estudiantesCache.put(e.id, e)
         }
     }
